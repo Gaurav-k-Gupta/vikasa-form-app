@@ -63,4 +63,3 @@ test/types/index.js
 
 # compiled app
 dist
-node_modules
