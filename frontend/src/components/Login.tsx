@@ -11,7 +11,6 @@ import {
   Typography,
   Alert
 } from '@mui/material';
-import { DUMMY_CREDENTIALS } from '../constants/auth';
 
 const schema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -19,6 +18,11 @@ const schema = z.object({
 });
 
 type FormValues = z.infer<typeof schema>;
+
+const DUMMY_CREDENTIALS = {
+  email: 'farmer@vikasa.org',
+  password: 'SecurePassword123!'
+};
 
 export const Login = () => {
   const [loginError, setLoginError] = useState('');
@@ -49,7 +53,7 @@ export const Login = () => {
         }}
       >
         <Typography component="h1" variant="h5">
-          Farmer Login
+          Login
         </Typography>
 
         <Box 
