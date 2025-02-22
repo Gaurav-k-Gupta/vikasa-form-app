@@ -1,4 +1,3 @@
-// frontend/src/components/Login.tsx
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,9 +8,14 @@ import {
   TextField,
   Button,
   Typography,
-  Alert
+  Alert,
+  CircularProgress
 } from '@mui/material';
+import { useSetAtom } from 'jotai';
+import { userAtom } from '../store/authAtoms';
+import { authenticateUser } from '../utils/auth';
 
+// Validation Schema
 const schema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required')
@@ -19,26 +23,34 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const DUMMY_CREDENTIALS = {
-  email: 'farmer@vikasa.org',
-  password: 'SecurePassword123!'
-};
-
 export const Login = () => {
   const [loginError, setLoginError] = useState('');
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const [loading, setLoading] = useState(false);
+  const setUser = useSetAtom(userAtom); // Using Jotai for global state
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>({
     resolver: zodResolver(schema)
   });
 
-  const onSubmit = (data: FormValues) => {
-    if (data.email === DUMMY_CREDENTIALS.email && 
-        data.password === DUMMY_CREDENTIALS.password) {
-      // TODO: Replace with actual authentication logic
-      alert('Login successful!');
-      setLoginError('');
+  const onSubmit = async (data: FormValues) => {
+    setLoading(true);
+    setLoginError('');
+
+    const response = await authenticateUser(data.email, data.password);
+
+    if (response.success) {
+      setUser({ email: data.email, token: response.token || null });
+      alert(response.message);
+      // Redirect to dashboard or home page here
     } else {
-      setLoginError('Invalid email or password');
+      setLoginError(response.message);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -56,10 +68,17 @@ export const Login = () => {
           Login
         </Typography>
 
-        <Box 
-          component="form" 
+        <Box
+          component="form"
           onSubmit={handleSubmit(onSubmit)}
-          sx={{ mt: 1, width: '100%' }}
+          sx={{
+            mt: 1,
+            width: '100%',
+            padding: 2,
+            backgroundColor: 'background.paper',
+            borderRadius: 2,
+            boxShadow: 3
+          }}
         >
           {loginError && (
             <Alert severity="error" sx={{ mb: 2 }}>
@@ -93,9 +112,14 @@ export const Login = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+            sx={{ mt: 3, mb: 2, height: 45, position: 'relative' }}
           >
-            Sign In
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: 'white' }} />
+            ) : (
+              'Sign In'
+            )}
           </Button>
         </Box>
       </Box>
