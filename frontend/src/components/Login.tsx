@@ -26,7 +26,7 @@ type FormValues = z.infer<typeof schema>;
 export const Login = () => {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
-  const setUser = useSetAtom(userAtom); // Using Jotai for global state
+  const setUser = useSetAtom(userAtom);
 
   const {
     register,
@@ -45,7 +45,6 @@ export const Login = () => {
     if (response.success) {
       setUser({ email: data.email, token: response.token || null });
       alert(response.message);
-      // Redirect to dashboard or home page here
     } else {
       setLoginError(response.message);
     }
