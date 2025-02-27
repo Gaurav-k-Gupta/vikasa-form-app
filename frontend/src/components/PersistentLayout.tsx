@@ -15,13 +15,13 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
-import IsMobileView from "../hooks/IsMobileView";
+import useIsMobileView from "../hooks/IsMobileView";
 
 const drawerWidth = 240;
 
 const PersistentLayout: React.FC = () => {
   const theme = useTheme();
-  const isMobile = IsMobileView();
+  const isMobile = useIsMobileView();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => setMobileOpen((prev) => !prev);
