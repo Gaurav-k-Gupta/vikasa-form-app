@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend 
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - vikasa-network
+    environment:
+      - REACT_APP_API_URL=http://127.0.0.1:3000
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - dynamodb
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - vikasa-network
+    environment:
+      - DATABASE_URL=http://dynamodb:8000
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - AWS_REGION=us-east-1
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb
+    ports:
+      - "8000:8000"
+    networks:
+      - vikasa-network
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb"]
+
+networks:
+  vikasa-network:
+    driver: bridge
