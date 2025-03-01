@@ -6,7 +6,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend 
     volumes:
@@ -15,14 +15,14 @@ services:
     networks:
       - vikasa-network
     environment:
-      - REACT_APP_API_URL=http://127.0.0.1:3000
+      - REACT_APP_API_URL=/api
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "8002:3000"
     depends_on:
       - dynamodb
     volumes:
