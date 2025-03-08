@@ -1,5 +1,3 @@
-// src/services/farmer.service.ts
-
 import { Farmer, CreateFarmerDto, UpdateFarmerDto } from '../models/farmer.model';
 import { IFarmerRepository } from '../repositories/farmer.repository.interface';
 

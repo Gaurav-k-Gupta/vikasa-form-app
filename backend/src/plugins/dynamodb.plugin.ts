@@ -1,5 +1,3 @@
-// src/plugins/dynamodb.plugin.ts
-
 import fp from 'fastify-plugin';
 import { FastifyPluginAsync } from 'fastify';
 import { createDynamoDBClient } from '../config/dynamodb.config';
@@ -26,7 +24,6 @@ export default fp(dynamoDBPlugin, {
   name: 'dynamodb',
 });
 
-// Add type definition for Fastify instance
 declare module 'fastify' {
   interface FastifyInstance {
     dynamodb: ReturnType<typeof createDynamoDBClient>;

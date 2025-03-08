@@ -1,5 +1,3 @@
-// src/repositories/dynamodb/farmer.repository.ts
-
 import { DynamoDBDocumentClient, PutCommand, GetCommand, UpdateCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
 import { IFarmerRepository } from '../farmer.repository.interface';
@@ -57,7 +55,7 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
       return existingFarmer;
     }
 
-    // Add metadata update
+   
     updateExpression.updateExpression += ', SET MetaData.UpdatedBy = :updatedBy, MetaData.UpdatedAt = :updatedAt';
     updateExpression.expressionAttributeValues[':updatedBy'] = userId;
     updateExpression.expressionAttributeValues[':updatedAt'] = now;
@@ -78,7 +76,7 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
 
   async delete(id: string): Promise<boolean> {
     try {
-      // Soft delete - set IsActive to false
+     
       const response = await this.docClient.send(
         new UpdateCommand({
           TableName: TABLES.FARMER,
@@ -114,8 +112,8 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
   }
 
   async findByEmail(email: string): Promise<Farmer[]> {
-    // Since there's no direct GSI for email, we'll use a scan operation with a filter
-    // Note: In a production environment, you should consider adding a GSI for frequently queried fields
+   
+   
     const response = await this.docClient.send(
       new QueryCommand({
         TableName: TABLES.FARMER,
@@ -145,7 +143,7 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
     const response = await this.docClient.send(
       new QueryCommand({
         TableName: TABLES.FARMER,
-        IndexName: GSI.FARMER_BY_SOCIAL_STATUS_INDEX, // Updated to match your schema's GSI name
+        IndexName: GSI.FARMER_BY_SOCIAL_STATUS_INDEX,
         KeyConditionExpression: keyConditionExpression,
         ExpressionAttributeValues: expressionAttributeValues,
       })
@@ -170,7 +168,7 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
     const response = await this.docClient.send(
       new QueryCommand({
         TableName: TABLES.FARMER,
-        IndexName: GSI.FARMER_BY_NF_START_YEAR_INDEX, // Updated to match your schema's GSI name
+        IndexName: GSI.FARMER_BY_NF_START_YEAR_INDEX,
         KeyConditionExpression: keyConditionExpression,
         ExpressionAttributeValues: expressionAttributeValues,
       })
@@ -210,7 +208,7 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
     const response = await this.docClient.send(
       new QueryCommand({
         TableName: TABLES.FARMER,
-        IndexName: GSI.FARMER_BY_VILLAGE, // Updated to match your schema's GSI name
+        IndexName: GSI.FARMER_BY_VILLAGE,
         KeyConditionExpression: keyConditionExpression,
         ExpressionAttributeValues: expressionAttributeValues,
       })
@@ -230,10 +228,10 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
     let updateExpression = 'SET';
     let isFirst = true;
 
-    // Handle BasicInfo fields
+   
     for (const [key, value] of Object.entries(data)) {
       if (value !== undefined) {
-        // Skip metadata fields
+       
         if (key === 'MetaData') continue;
         
         const attributeName = `#${key}`;
@@ -243,12 +241,12 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
           updateExpression += ',';
         }
         
-        // Map to the correct schema path based on the field
+       
         if (['Name', 'RelationType', 'RelativeName', 'Cluster', 'Village', 
              'MobileNumber', 'SHGName', 'VOName', 'FarmerCategory', 'SocialStatus'].includes(key)) {
           updateExpression += ` BasicInfo.${attributeName} = ${attributeValue}`;
         } else {
-          // For other fields, update directly
+         
           updateExpression += ` ${attributeName} = ${attributeValue}`;
         }
         
@@ -260,7 +258,7 @@ export class DynamoDBFarmerRepository implements IFarmerRepository {
     }
 
     if (isFirst) {
-      // No fields to update
+     
       return {
         updateExpression: '',
         expressionAttributeNames: {},

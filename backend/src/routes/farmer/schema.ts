@@ -1,5 +1,3 @@
-// src/routes/farmer/schema.ts
-
 import { FromSchema } from 'json-schema-to-ts';
 
 const farmerProperties = {
